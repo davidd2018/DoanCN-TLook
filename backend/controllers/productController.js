@@ -32,7 +32,7 @@ const addProduct = async (req,res) => {
             image: imagesUrl,
             // date: Date.now()
         }
-        console.log(productData);
+
         
         const product = new productModel(productData);
         await product.save();
@@ -79,6 +79,7 @@ const singleProduct = async (req,res) => {
     try {
         
         const { productId } = req.body
+        
         const product = await productModel.findById(productId)
         res.json({success:true,product})
 

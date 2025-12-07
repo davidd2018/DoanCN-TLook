@@ -7,9 +7,9 @@ import { useEffect } from 'react';
 
 
 const Login = () => {
-    
+  
   const [currentState , setCurrentState] = useState('Đăng nhập');
-  const {token, setToken , navigate , backendUrl} = useContext(ShopContext)
+  const {token, setToken , navigate , backendUrl , setUser} = useContext(ShopContext)
   const [name,setName] = useState('');
   const [password,setPassword] = useState('');
   const [email,setEmail] = useState('');
@@ -36,7 +36,9 @@ const Login = () => {
         const response  = await axios.post(backendUrl + '/api/user/login' , {email,password});
         if(response.data.success){
           setToken(response.data.token);
+          setUser(response.data.user);
           localStorage.setItem('token' , response.data.token);
+          localStorage.setItem('user' , JSON.stringify(response.data.user));
         } else {
           toast.error(response.data.message);
         }
@@ -58,7 +60,7 @@ const Login = () => {
 
 
   return (
-    <form onSubmit={onSubmitHandler} className='flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800'>
+    <form onSubmit={onSubmitHandler} className='flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 mb-14 gap-4 text-gray-800 bg-white rounded-lg shadow-lg p-6'>
       <div className='inline-flex items-center gap-2 mb-2 mt-10'>
         <p className='parata-regular text-3xl'>{currentState}</p>
         <hr  className='border-none h-[1.5px] w-8 bg-gray-800'/>

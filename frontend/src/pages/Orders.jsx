@@ -46,7 +46,7 @@ console.log(orderData);
   },[token])
 
   return (
-    <div className='border-t pt-16'>
+    <div className='border-t pt-16 pb-16 px-8 bg-white'>
 
       <div className='text-2xl'>
         <Title  text1={'Đơn hàng'} text2={'của tôi'} />
@@ -77,7 +77,7 @@ console.log(orderData);
                         <p className='min-w-2 h-2 rounded-full bg-green-500'></p>
                         <p className='text-sm md:text-base'>{item.status}</p>
                     </div>
-                    <button onClick={loadOrderData} className='border px-4 py-2 text-sm font-medium rounded-sm'>Theo dõi đơn hàng</button>
+                    <button onClick={loadOrderData} className='border px-4 py-2 text-sm font-medium rounded-md hover:bg-black hover:text-white transition ease-in-out'>Theo dõi đơn hàng</button>
                 </div>
             </div>
           ))

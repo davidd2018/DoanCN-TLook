@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect} from 'react'
 import { useParams } from 'react-router-dom'
-import { ShopContext } from '../context/ShopContext';
+import {ShopContext}  from '../context/ShopContext';
 import { assets } from '../assets/assets'
 import RelatedProducts from '../components/RelatedProducts';
 const Product = () => {
@@ -11,24 +11,40 @@ const Product = () => {
   const [image , setImage] = useState('');
   const [size, setSize] = useState('');
 
+  // const fetchProductData = async () => {
+  //   console.log("ProductIdasdasdsd", productId);
+    
+  //   products.map((item) => {
+  //     if(item._id == productId){
+  //       setProductData(item);
+  //       setImage(item.image[0]);
+  //       return null;
+  //     }
+  //   });
+  // }
+
+  // useEffect(() =>{
+  //   console.log("ProductId");
+  //   fetchProductData();
+  // },[productId]);
   const fetchProductData = async () => {
-    products.map((item) => {
-      if(item._id === productId){
-        setProductData(item);
-        setImage(item.image[0]);
-        return null;
+    if (products && products.length > 0) {
+      const product = products.find((item) => item._id === productId);
+      if (product) {
+        setProductData(product);
+        setImage(product.image[0]);
       }
-    });
-  }
+    }
+  };
 
-  useEffect(() =>{
+  useEffect(() => {
     fetchProductData();
-  },[productId]);
-
+  }, [productId, products]);
+console.log("Product Data123123", productData);
 
   return productData ? (
 
-    <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100'>
+    <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100 bg-white'>
 
       {/* Product Data */}
       <div className='flex gap-12 sm:gap-12 flex-col sm:flex-row'>
@@ -61,7 +77,7 @@ const Product = () => {
               <p className='mt-5 text-3xl font-medium text-[#e8002d]'>{productData.price.toLocaleString('vi-VN')}{currency}</p>
               <p className='mt-5 text-gray-500 md:w-4/5'>{productData.description}</p>
               <div className='flex flex-col gap-4 my-8'>
-                  <p>Select Size</p>
+                  <p>Chọn size</p>
                   <div className='flex gap-2'>
                       {productData.sizes.map((item,index)=>(
                         <button onClick = {() =>setSize(item)} className={`border py-2 px-4 bg-gray-100 ${item === size ? 'border-orange-500' : '' } `} key={index}>{item}</button>
@@ -86,30 +102,7 @@ const Product = () => {
           <p className='border px-5 py-3 text-sm'>Đánh giá (222)</p>
         </div>
         <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
-           <p>1. Giới thiệu <b>Vợt Cầu Lông Victor Ryuga TD/C chính hãng</b>
--  <b>Vợt Cầu Lông Victor Ryuga TD/C chính hãng</b> là mẫu vợt của Victor được ra mắt trong thời gian gần đây với sức mạnh tấn công được gia tăng. Ryuga TD vẫn giữ được linh hồn thiên công, với thiết kế hầm hố, smash uy lực, nổi trội về độ nặng đầu, thân cứng với phiên bản 4U phù hợp cho người chơi có trình độ trung bình trở lên và cần thời gian chơi để có thể làm quen và kiểm soát. Riêng bản 3U với thân rất cứng chỉ nên được dùng cho người chơi có trình độ khá trở lên, cần lực cổ tay khỏe.
-
-- Đặc biệt, với dòng vợt phiên bản mới được tích hợp thêm nhiều công nghệ hiện đại, tiên tiến nhất như : POWER BOX, SEVEN-SIX, PYROFIL, HARD CORE TECNOLOGY, FREE CORE, WES 2.0 mang đến người trên thêm nhiều trải nghiệm mới nhất.</p>           
-            <p>2. Thông số Vợt Cầu Lông Victor Ryuga TD/C chính hãng
-- Thương hiệu: Victor
-
-- Điểm cân bằng: Khoảng 298mm
-
-- Độ cứng: Cứng (4U) và rất cứng (3U)
-
-- Khung vợt: High Resilience Modulus Graphite+HARD CORED TECHNOLOGY
-
-- Thân vợt: High Resilience Modulus Graphite+PYROFIL+6.8 SHAFT
-
-- Trọng lượng: 3U, 4U
-
-- Chu vi cán vợt: 4UG5, 3UG6
-
-- Sức căng tối đa: 3U ≦ 30 lbs (13.5 Kg)
-
-                             4U ≦ 29 lbs (13 Kg)
-
-- Chiều dài tổng thể: 675mm</p>
+          <p>{productData.description}</p>
         </div>              
       </div>
 

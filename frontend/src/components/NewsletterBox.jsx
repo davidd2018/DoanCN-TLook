@@ -7,7 +7,7 @@ const NewsletterBox = () => {
     }
 
   return (
-    <div className='text-center'>
+    <div className='text-center py-1'>
         <p className='text-2xl font-medium text-gray-800'>Đăng ký ngay & giảm giá 15%</p>
         <p className='text-gray-600 mt-3 text-[16px]'>
             Chỉ cần đăng ký tài khoản, bạn sẽ nhận ngay mã giảm giá 15% cho đơn hàng đầu tiên.

@@ -15,7 +15,7 @@ const CartTotal = () => {
 
         <div className='flex flex-col gap-2 mt-2 text-sm'>
             <div className='flex justify-between'>
-                <p>Tổng tiền</p>
+                <p>Tạm tính</p>
                 <p>{getCartAmount().toLocaleString('vi-VN')}{currency}</p>
             </div>
             <hr/>

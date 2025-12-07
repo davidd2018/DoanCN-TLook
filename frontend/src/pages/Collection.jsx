@@ -1,4 +1,4 @@
-import React, { use, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ShopContext } from '../context/ShopContext';
 import { assets } from '../assets/assets';
 import Title from '../components/Title';
@@ -74,7 +74,7 @@ const Collection = () => {
   },[sortType]);
 
   return (
-    <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t '>
+    <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 pb-10 border-t bg-white px-8'>
       {/* filter Options */}
       <div className='min-w-60'>
         <p onClick={()=>setShowfilter(!showFilter)} className='my-2 text-xl flex items-center cursor-pointer gap-2'>BỘ LỌC
@@ -114,7 +114,11 @@ const Collection = () => {
       {/* Right Side */}
       <div className='flex-1'>
         <div className='flex justify-between text-base sm:text-2xl mb-4'>
-          <Title text1={'TẤT CẢ'} text2={'SẢN PHẨM'} />
+          <div className='flex items-center gap-3 mb-4'>
+            <h2 className='text-2xl sm:text-3xl font-bold text-gray-800'>
+              TẤT CẢ <span className='text-blue-600'>SẢN PHẨM</span>
+            </h2>
+          </div>
           {/* Product Sort */}
           <select onChange={(e)=>setSortType(e.target.value)} className='border-2 border-gray-300 text-sm px-2 cursor-pointer'>
             <option value="relavent">Sắp xếp theo giá: Liên quan</option>

@@ -4,13 +4,13 @@ import { assets } from '../assets/assets'
 import NewsletterBox from '../components/NewsletterBox'
 const About = () => {
   return (
-    <div>
+    <div className='bg-white py-5'>
 
       <div className='text-2xl text-center pt-8 border-t'>
         <Title text1={'Giới thiệu'} text2={'về chúng tôi'}/>
       </div>
 
-      <div className='my-10 flex flex-col md:flex-row gap-16'>
+      <div className='my-10 flex flex-col md:flex-row gap-16 justify-center'>
         <img className='w-full md:max-w-[460px] rounded' src={assets.about_img} alt="" />
         <div className='flex flex-col justify-center gap-6 md:w-2/4 text-gray-600'>
             <p>TLOOK là một thương hiệu trẻ ra đời vào năm 2024, chuyên cung cấp các dòng vợt cầu lông chất lượng cao, phục vụ nhu cầu luyện tập và thi đấu của người chơi ở mọi trình độ – từ phong trào đến chuyên nghiệp.
