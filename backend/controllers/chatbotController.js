@@ -50,12 +50,10 @@ const getBestsellers = async () => {
     }
 };
 
-// Function to get products by category
+// Function to get products by category (brand) - exact value
 const getProductsByCategory = async (category) => {
     try {
-        const products = await productModel.find({ 
-            category: new RegExp(category, 'i') 
-        }).limit(5);
+        const products = await productModel.find({ category });
         return products;
     } catch (error) {
         console.log(error);
@@ -63,16 +61,34 @@ const getProductsByCategory = async (category) => {
     }
 };
 
-// Function to get products by brand/label keyword
-const getProductsByBrand = async (brand) => {
+// Function to get products by brand (wrapper for clarity)
+const getProductsByBrand = async (brandValue) => {
+    try {
+        const products = await productModel.find({ category: brandValue });
+        return products;
+    } catch (error) {
+        console.log(error);
+        return [];
+    }
+};
+
+// Function to get products by playstyle (subCategory)
+const getProductsByPlaystyle = async (styleValue) => {
+    try {
+        const products = await productModel.find({ subCategory: styleValue });
+        return products;
+    } catch (error) {
+        console.log(error);
+        return [];
+    }
+};
+
+// Function to get products by both brand and playstyle
+const getProductsByBrandAndPlaystyle = async (brandValue, styleValue) => {
     try {
         const products = await productModel.find({ 
-            $or: [
-                { category: new RegExp(brand, 'i') },
-                { subCategory: new RegExp(brand, 'i') },
-                { name: new RegExp(brand, 'i') },
-                { description: new RegExp(brand, 'i') },
-            ]
+            category: brandValue,
+            subCategory: styleValue,
         });
         return products;
     } catch (error) {
@@ -92,21 +108,21 @@ const chatWithBot = async (req, res) => {
             products: []
         };
 
-        // Brand mapping (add more if needed)
+        // Brand mapping (add more if needed) - dbValue khớp với field category trong DB
         const brandKeywords = [
-            { brand: 'Yonex', patterns: /(yonex)/ },
-            { brand: 'Lining', patterns: /(lining|li-ning|li ning)/ },
-            { brand: 'Victor', patterns: /(victor)/ },
-            { brand: 'Apacs', patterns: /(apacs)/ },
-            { brand: 'Mizuno', patterns: /(mizuno)/ },
+            { brand: 'Yonex', dbValue: 'Yonex', patterns: /(yonex)/ },
+            { brand: 'Lining', dbValue: 'Lining', patterns: /(lining|li-ning|li ning)/ },
+            { brand: 'Victor', dbValue: 'Victor', patterns: /(victor)/ },
+            { brand: 'Apacs', dbValue: 'Apacs', patterns: /(apacs)/ },
+            { brand: 'Mizuno', dbValue: 'Mizuno', patterns: /(mizuno)/ },
         ];
 
-        // Playstyle keywords
+        // Playstyle keywords - dbValue khớp với field subCategory: Attack | Defense | Balance
         const playstyleKeywords = [
-            { label: 'tấn công', patterns: /(công|tấn công|attack|power)/ },
-            { label: 'phòng thủ', patterns: /(thủ|phòng thủ|defense|control)/ },
-            { label: 'cân bằng', patterns: /(cân bằng|allround|linh hoạt|toàn diện)/ },
-            { label: 'dễ chơi', patterns: /(mới chơi|entry|beginner|dễ đánh|dễ chơi)/ },
+            { label: 'tấn công', dbValue: 'Attack', patterns: /(công|tấn công|attack|power)/ },
+            { label: 'phòng thủ', dbValue: 'Defense', patterns: /(thủ|phòng thủ|defense|control)/ },
+            { label: 'cân bằng', dbValue: 'Balance', patterns: /(cân bằng|allround|linh hoạt|toàn diện)/ },
+            { label: 'dễ chơi', dbValue: 'Balance', patterns: /(mới chơi|entry|beginner|dễ đánh|dễ chơi)/ },
         ];
 
         // Greeting patterns
@@ -130,10 +146,28 @@ const chatWithBot = async (req, res) => {
             response.text = "Bạn muốn tìm vợt theo phong cách nào (tấn công, phòng thủ, cân bằng, dễ chơi) và của hãng nào (Yonex, Lining, Victor, Apacs, Mizuno)?";
             response.products = [];
         }
+        // Brand + Playstyle together
+        else if (
+            brandKeywords.some(({ patterns }) => lowerMessage.match(patterns)) &&
+            playstyleKeywords.some(({ patterns }) => lowerMessage.match(patterns))
+        ) {
+            const matchedBrand = brandKeywords.find(({ patterns }) => lowerMessage.match(patterns));
+            const matchedStyle = playstyleKeywords.find(({ patterns }) => lowerMessage.match(patterns));
+
+            const products = await getProductsByBrandAndPlaystyle(
+                matchedBrand.dbValue,
+                matchedStyle.dbValue
+            );
+
+            response.text = products.length > 0
+                ? `Tôi tìm thấy ${products.length} sản phẩm ${matchedStyle.label} của thương hiệu ${matchedBrand.brand}:`
+                : `Hiện chưa có sản phẩm ${matchedStyle.label} của thương hiệu ${matchedBrand.brand}.`;
+            response.products = products;
+        }
         // Brand specific requests
         else if (brandKeywords.some(({ patterns }) => lowerMessage.match(patterns))) {
             const matchedBrand = brandKeywords.find(({ patterns }) => lowerMessage.match(patterns));
-            const products = await getProductsByBrand(matchedBrand.brand);
+            const products = await getProductsByBrand(matchedBrand.dbValue);
             response.text = products.length > 0
                 ? `Tôi tìm thấy ${products.length} sản phẩm phù hợp với thương hiệu ${matchedBrand.brand}:`
                 : `Hiện chưa có sản phẩm phù hợp thương hiệu ${matchedBrand.brand}.`;
@@ -142,7 +176,7 @@ const chatWithBot = async (req, res) => {
         // Playstyle requests
         else if (playstyleKeywords.some(({ patterns }) => lowerMessage.match(patterns))) {
             const matchedStyle = playstyleKeywords.find(({ patterns }) => lowerMessage.match(patterns));
-            const products = await searchProducts(matchedStyle.label);
+            const products = await getProductsByPlaystyle(matchedStyle.dbValue);
             response.text = products.length > 0
                 ? `Tôi tìm thấy ${products.length} sản phẩm phù hợp với phong cách ${matchedStyle.label}:`
                 : `Hiện chưa có sản phẩm phù hợp với phong cách ${matchedStyle.label}.`;
