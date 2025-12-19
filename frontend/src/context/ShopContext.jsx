@@ -23,6 +23,14 @@ const ShopContextProvider = (props) => {
 
     const addToCart = async(itemId , size) =>{
 
+        // Check if user is logged in
+        const currentToken = token || localStorage.getItem('token');
+        if(!currentToken){
+            toast.warning('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+            navigate('/login');
+            return;
+        }
+
         if(!size){
             toast.error('Vui lòng chọn size sản phẩm !');
             return;
@@ -47,10 +55,10 @@ const ShopContextProvider = (props) => {
         }
         setCartItems(cartData);
 
-        if(token) {
+        if(currentToken) {
             try {
 
-                await axios.post(backendUrl + '/api/cart/add' , {itemId,size} , {headers:{token}});
+                await axios.post(backendUrl + '/api/cart/add' , {itemId,size} , {headers:{token: currentToken}});
 
             } catch (error) {
                 console.log(error);
